@@ -541,6 +541,15 @@ class WriteExtension(cliapp.Application):
         else:
             return []
 
+    def parse_create_disks(self):
+        '''Parse $CREATE_DISKS into list of disks to create and attach.'''
+
+        if 'CREATE_DISKS' in os.environ:
+            s = os.environ['CREATE_DISKS']
+            return s.split(':')
+        else:
+            return []
+
     def bootloader_config_is_wanted(self):
         '''Does the user want to generate a bootloader config?
 

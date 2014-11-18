@@ -150,14 +150,32 @@ class VirtualBoxPlusSshWriteExtension(morphlib.writeexts.WriteExtension):
                 '--nic2', 'nat', '--natnet2', 'default'])
 
         attach_disks = self.parse_attach_disks()
-        for device_no, disk in enumerate(attach_disks, 1):
-            cmd = ['storageattach', vm_name,
+        device_no = 1 # 0 is the Baserock volume
+        for disk in attach_disks:
+            cmd = ['storageattach', vm_name, 
                    '--storagectl', 'SATA Controller',
                    '--port', str(device_no),
                    '--device', '0',
                    '--type', 'hdd',
                    '--medium', disk]
             commands.append(cmd)
+            device_no += 1
+
+        create_disks = self.parse_create_disks()
+        for disk_spec in create_disks:
+            (filename, gigabytes) = disk_spec.split(',')
+            cmd = ['createhd',
+                   '--filename', filename,
+                   '--size', str(int(gigabytes)*1024)]
+            commands.append(cmd)
+            cmd = ['storageattach', vm_name,
+                   '--storagectl', 'SATA Controller',
+                   '--port', str(device_no),
+                   '--device', '0',
+                   '--type', 'hdd',
+                   '--medium', filename]
+            commands.append(cmd)
+            device_no += 1
 
         if autostart:
             commands.append(['startvm', vm_name])
