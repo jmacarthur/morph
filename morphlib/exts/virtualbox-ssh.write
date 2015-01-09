@@ -192,12 +192,12 @@ class VirtualBoxPlusSshWriteExtension(morphlib.writeexts.WriteExtension):
         if network_config is None:
             raise cliapp.AppException('NETWORK_CONFIG was not given')
 
-        if "eth0:" not in network_config:
+        if "eth0:" not in network_config and "enp0s3" not in network_config:
             raise cliapp.AppException(
                 'NETWORK_CONFIG does not contain '
                 'the eth0 configuration')
 
-        if "eth1:" not in network_config:
+        if "eth1:" not in network_config and "enp0s8" not in network_config:
             raise cliapp.AppException(
                 'NETWORK_CONFIG does not contain '
                 'the eth1 configuration')
